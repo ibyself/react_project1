@@ -1,10 +1,35 @@
 import React, { Component } from 'react'
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button ,message} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import logo from './images/logo.png'
 import './css/login.less'
+import {reqLogin} from '../../api'
 export default class Login extends Component {
+    login=async (values)=>{
+        const {username,password}=values
+        let result=await reqLogin(username,password)
+        if(result.status===0){
+            this.props.history.replace('/')
+            message.success('登录成功')
+        }else{
+            message.error(result.msg)
+        }
+    }
     
+    validator=async(rule, value)=>{
+        // console.log(value,rule)
+        const length=value && value.length
+        const pwdReg=/^[a-zA-Z0-9_]+$/
+        if(!value){
+            throw new Error('必须输入密码')
+        }else if(length<4){
+            throw new Error('密码必须大于4位')
+        }else if(length>12){
+            throw new Error('密码必须小于12位')
+        }else if(!pwdReg.test(value)){
+            throw new Error('密码必须是英文、数字或下划线组成')
+        }
+    }
     render() {
         return (
             <div className='login'>
@@ -20,14 +45,28 @@ export default class Login extends Component {
                         initialValues={{
                             remember: true,
                         }}
+                        onFinish={this.login}
                     >
                         <Form.Item
                             name="username"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your Username!',
+                                    message: '必须输入用户名',
+                                    whitespace:true
                                 },
+                                {
+                                    min:4,
+                                    message:'用户名必须大于4位'
+                                },
+                                {
+                                    max:12,
+                                    message:'用户名必须小于12位'
+                                },
+                                {
+                                    pattern:/^[a-zA-Z0-9_]+$/,
+                                    message:'用户名必须是英文、数字或下划线组成'
+                                }
                             ]}
                         >
                             <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="用户名" />
@@ -35,10 +74,8 @@ export default class Login extends Component {
                         <Form.Item
                             name="password"
                             rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your Password!',
-                                },
+                                //自定义表单效验规则
+                                {validator:this.validator}
                             ]}
                         >
                             <Input
@@ -50,7 +87,7 @@ export default class Login extends Component {
                        
 
                         <Form.Item>
-                            <Button type="primary" htmlType="submit" className="login-form-button">登陆</Button>
+                            <Button type="primary" htmlType="submit" className="login-form-button">登录</Button>
         
                         </Form.Item>
                     </Form>
