@@ -1,14 +1,20 @@
 import React, { Component } from 'react'
 import { Form, Input, Button ,message} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import {Redirect} from 'react-router-dom'
 import logo from './images/logo.png'
 import './css/login.less'
 import {reqLogin} from '../../api'
+import storageUtils from '../../utils/storageUtils'
+import memoryUtils from '../../utils/memoryUtils'
 export default class Login extends Component {
     login=async (values)=>{
         const {username,password}=values
         let result=await reqLogin(username,password)
         if(result.status===0){
+            const user=result.data
+            storageUtils.saveUser(user)
+            memoryUtils.user=user
             this.props.history.replace('/')
             message.success('登录成功')
         }else{
@@ -31,6 +37,10 @@ export default class Login extends Component {
         }
     }
     render() {
+        const user=memoryUtils.user
+        if(user._id){
+            return <Redirect to='/'/>
+        }
         return (
             <div className='login'>
                 <header className='login-header'>
