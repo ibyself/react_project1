@@ -19,6 +19,7 @@ const { SubMenu } = Menu
 class LeftNav extends Component {
 
     render() {
+        let selectKey=this.props.location.pathname
         return (
             <div className='left-nav'>
                 <Link className='left-nav-link' to='/home'>
@@ -26,6 +27,7 @@ class LeftNav extends Component {
                     <h1>硅谷后台</h1>
                 </Link>
                 <Menu
+                    selectedKeys={[selectKey]}
                     mode="inline"
                     theme="dark">
                     <Menu.Item key="/home">
