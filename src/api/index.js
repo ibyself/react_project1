@@ -4,7 +4,7 @@ import {message} from 'antd'
 export const reqLogin=(username,password)=>ajax.post('/login',{username,password})
 export const reqWeather=(city)=>{
     return new Promise((resolve,reject)=>{
-        const url=`http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
+        const url=`http://api.map.baidu.com/weather/v1/?district_id=341300&output=json&ak=nVE2D4P7aWFuG55NBm1wvQ6WYdX1NBzt`
         jsonp(url,{},(error,data)=>{
             if(!error&&data.error===0){
                 const{dayPictureUrl, weather} =data.results[0].weather_data[0]
